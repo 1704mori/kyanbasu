@@ -27,7 +27,14 @@
 		}
 
 		loading = true;
-		file = await FigmaAPI.getFile($auth?.accessToken, fileID);
+		const [data, err] = await FigmaAPI.getFile(fileID);
+		if (err) {
+			alert(err.message);
+			loading = false;
+			return;
+		}
+
+		file = data;
 		loading = false;
 	}
 
