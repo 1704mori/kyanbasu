@@ -12,6 +12,7 @@
 
 	import Button from '$lib/components/Button.svelte';
 	import Code from '$lib/components/Code.svelte';
+	import Input from '$lib/components/Input.svelte';
 
 	let fileID = '';
 	let file: FigmaFile | undefined;
@@ -19,6 +20,7 @@
 
 	let loading = false;
 	let preview = false;
+	let help = false;
 
 	async function handleSearchFile() {
 		if (!fileID) {
@@ -48,6 +50,10 @@
 		generated = await generateComponentFormatted(child);
 	}
 
+	function handleHelp() {
+		help = !help;
+	}
+
 	onMount(async () => {
 		let accessToken = document.cookie.split('figma_access_token=')[1];
 		if (!accessToken) return;
@@ -59,13 +65,13 @@
 	});
 </script>
 
-<div class="grid place-items-center mx-auto h-full max-w-5xl">
+<div class="grid place-items-center mx-auto h-full max-w-3xl">
 	{#if !$auth?.accessToken}
 		<LoginWithFigma
 			href="https://www.figma.com/oauth?client_id={PUBLIC_FIGMA_CLIENT_ID}&redirect_uri={PUBLIC_FIGMA_REDIRECT_URI}&scope=files:read&state={Date.now()}&response_type=code"
 		/>
 	{:else if file}
-		<div class="flex flex-col gap-2">
+		<div class="flex flex-col gap-2 w-full">
 			<div class="flex flex-col gap-1">
 				<span>
 					File ID: {fileID}
@@ -91,26 +97,39 @@
 			{#if generated}
 				<div class="flex flex-col gap-2">
 					<span> Generated: </span>
-					<Code code={generated}/>
+					<Code code={generated} />
 				</div>
 			{/if}
 			<Button ghost="ghost" on:click={() => (file = undefined)}>Search Again</Button>
 		</div>
 	{:else}
-		<div class="flex flex-col gap-1 w-full">
-			<input
-				class="bg-neutral-900 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-				type="text"
-				placeholder="File ID"
-				bind:value={fileID}
-			/>
-			<Button disabled={loading} {loading} on:click={handleSearchFile}>
-				{#if loading}
-					Loading...
-				{:else}
-					Search
-				{/if}
-			</Button>
+		<div class="flex flex-col gap-5 w-full">
+			<Input placeholder="File ID" bind:value={fileID} />
+			{#if help}
+				<div class="flex flex-col gap-2 text-neutral-500">
+					<img class="rounded-md" src="images/figma_id_help.png" alt="Figma ID Help" />
+					<span class="font-medium">
+						To get the file ID, open the file in Figma and copy the ID from the URL as shown in the
+						image above
+					</span>
+				</div>
+			{/if}
+			<div class="grid grid-cols-2 gap-2">
+				<Button color="accent-light" disabled={loading} {loading} on:click={handleSearchFile}>
+					{#if loading}
+						Loading...
+					{:else}
+						Find
+					{/if}
+				</Button>
+				<Button color="accent-light" ghost="ghost" on:click={handleHelp}>
+					{#if help}
+						Hide Help
+					{:else}
+						Show Help
+					{/if}
+				</Button>
+			</div>
 		</div>
 	{/if}
 </div>
