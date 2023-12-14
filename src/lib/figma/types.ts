@@ -53,6 +53,7 @@ export type DocumentChild = {
   layoutSizingVertical: string;
   clipsContent: boolean;
   background: Background[];
+  characters: string;
   fills: Background[];
   strokes: any[];
   strokeWeight: number;
