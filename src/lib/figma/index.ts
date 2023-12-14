@@ -1,8 +1,7 @@
 import type { FigmaFile, FigmaUser, RequestTokenResponse } from "./types";
 import { auth } from "$lib/stores/auth";
 import { get } from "svelte/store";
-
-const FIGMA_API_URL = 'https://api.figma.com';
+import { PUBLIC_FIGMA_API_URL } from "$env/static/public";
 
 class FigmaAPI {
   private clientId: string;
@@ -38,7 +37,7 @@ class FigmaAPI {
   }
 
   static async getMe(accessToken: string): Promise<FigmaUser> {
-    const url = new URL(`${FIGMA_API_URL}/v1/me`);
+    const url = new URL(`${PUBLIC_FIGMA_API_URL}/v1/me`);
 
     try {
       const data = await fetch(url, {
@@ -54,7 +53,7 @@ class FigmaAPI {
   }
 
   static async getFile(fileId: string): Promise<[FigmaFile, Error | null]> {
-    const url = new URL(`${FIGMA_API_URL}/v1/files/${fileId}`);
+    const url = new URL(`${PUBLIC_FIGMA_API_URL}/v1/files/${fileId}`);
     const token = get(auth)?.accessToken;
 
     try {

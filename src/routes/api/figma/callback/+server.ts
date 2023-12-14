@@ -1,12 +1,13 @@
 
-import { FIGMA_CLIENT_ID, FIGMA_CLIENT_SECRET, FIGMA_REDIRECT_URI } from "$env/static/private";
+import { FIGMA_CLIENT_SECRET } from "$env/static/private";
+import { PUBLIC_FIGMA_CLIENT_ID, PUBLIC_FIGMA_REDIRECT_URI } from "$env/static/public";
 import FigmaAPI from "$lib/figma";
 import type { RequestEvent } from "./$types";
 
 const figma = new FigmaAPI(
-  FIGMA_CLIENT_ID,
+  PUBLIC_FIGMA_CLIENT_ID,
   FIGMA_CLIENT_SECRET,
-  FIGMA_REDIRECT_URI
+  PUBLIC_FIGMA_REDIRECT_URI
 );
 
 export async function GET(req: RequestEvent) {
