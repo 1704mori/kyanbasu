@@ -8,6 +8,7 @@
 	import LoginWithFigma from '$lib/components/LoginWithFigma.svelte';
 
 	import { auth, logout } from '$lib/stores/auth';
+	import { PUBLIC_FIGMA_CLIENT_ID, PUBLIC_FIGMA_REDIRECT_URI } from '$env/static/public';
 
 	let fileID = '';
 	let file: FigmaFile;
@@ -59,7 +60,7 @@
 <div class="grid place-items-center h-full">
 	{#if !$auth?.accessToken}
 		<LoginWithFigma
-			href="https://www.figma.com/oauth?client_id=nk6f9Qy4ghHLRnyhe5IQ0v&redirect_uri=http://localhost:5173/api/figma/callback&scope=files:read&state=123&response_type=code"
+			href="https://www.figma.com/oauth?client_id=${PUBLIC_FIGMA_CLIENT_ID}&redirect_uri=${PUBLIC_FIGMA_REDIRECT_URI}&scope=files:read&state=${Date.now()}&response_type=code"
 		/>
 	{:else if file}
 		<div class="flex flex-col gap-2">
