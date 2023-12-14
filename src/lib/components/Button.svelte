@@ -6,7 +6,7 @@
 
 	export let type: 'button' | 'submit' | 'reset' = 'button';
 	// phantasm is a ghost button that is not visible until hovered
-	export let ghost: 'phantasm' | 'ghost' | "none" = 'none';
+	export let ghost: 'phantasm' | 'ghost' | 'none' = 'none';
 
 	export let size: 'sm' | 'md' | 'lg' = 'md';
 	export let color: 'primary' = 'primary';
@@ -18,6 +18,51 @@
 		md: 'py-2 px-4 text-md',
 		lg: 'py-3 px-6 text-lg'
 	};
+
+	function buildBaseColor() {
+		switch (color) {
+			case 'primary':
+				return 'bg-primary hover:bg-primary-accent text-white';
+			default:
+				return 'bg-primary hover:bg-primary-accent text-white';
+		}
+	}
+
+	function buildGhost() {
+		switch (color) {
+			case 'primary':
+				return 'bg-primary/20 hover:bg-primary/30 border border-primary';
+			default:
+				return 'bg-primary/20 hover:bg-primary/30 border border-primary';
+		}
+	}
+
+	function buildPhantasm() {
+		switch (color) {
+			case 'primary':
+				return 'bg-transparent border border-primary hover:bg-primary/20 text-white';
+			default:
+				return 'bg-transparent border border-primary hover:bg-primary/20 text-white';
+		}
+	}
+
+	function buildLoading() {
+		switch (color) {
+			case 'primary':
+				return 'bg-primary/50 cursor-not-allowed';
+			default:
+				return 'bg-primary/50 cursor-not-allowed';
+		}
+	}
+
+	function buildDisabled() {
+		switch (color) {
+			case 'primary':
+				return 'bg-primary/50';
+			default:
+				return 'bg-primary/50';
+		}
+	}
 </script>
 
 <button
@@ -25,10 +70,10 @@
 	{...$$props}
 	class={cn(
 		sizes[size],
-		`bg-${color} hover:bg-${color}-accent text-white`,
-		ghost === 'phantasm' && `bg-transparent border border-${color} hover:bg-${color}/20 text-white`,
-		ghost === 'ghost' && `bg-${color}/20 hover:bg-${color}/30 border border-${color}`,
-		loading && `bg-${color}/50 cursor-not-allowed`,
+		buildBaseColor(),
+		ghost === 'ghost' && buildGhost(),
+		ghost === 'phantasm' && buildPhantasm(),
+		loading && buildLoading(),
 		'rounded-lg',
 		'font-medium',
 		'transition-colors',
@@ -36,7 +81,8 @@
 		'focus:ring-2',
 		'focus:ring-${color}-500',
 		'focus:ring-opacity-50',
-		`disabled:bg-${color}/50`,
+		// `disabled:bg-${color}/50`,
+		disabled && buildDisabled(),
 		'disabled:cursor-not-allowed',
 		'disabled:pointer-events-none'
 	)}
