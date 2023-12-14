@@ -68,7 +68,7 @@ class FigmaAPI {
 
       const response = await data.json();
 
-      if (response.status !== 200) throw new Error(response.err);
+      if (response.status && response.status !== 200) throw new Error(response.err);
 
       return [response, null];
     } catch (error: any) {
