@@ -10,11 +10,15 @@
 	import { auth, logout } from '$lib/stores/auth';
 	import { PUBLIC_FIGMA_CLIENT_ID, PUBLIC_FIGMA_REDIRECT_URI } from '$env/static/public';
 
+	import Button from '$lib/components/Button.svelte';
+	import Code from '$lib/components/Code.svelte';
+
 	let fileID = '';
 	let file: FigmaFile;
 	let generated: string;
 
 	let loading = false;
+	let preview = false;
 
 	async function handleSearchFile() {
 		if (!fileID) {
@@ -39,11 +43,9 @@
 		loading = false;
 	}
 
-	function handleGenerate() {
+	async function handleGenerate() {
 		const child = file.document.children[0].children[0] as unknown as DocumentChild;
-		const component = generateComponent(child);
-
-		generated = component;
+		generated = generateComponent(child);
 	}
 
 	onMount(async () => {
@@ -57,7 +59,7 @@
 	});
 </script>
 
-<div class="grid place-items-center h-full">
+<div class="grid place-items-center mx-auto h-full max-w-5xl">
 	{#if !$auth?.accessToken}
 		<LoginWithFigma
 			href="https://www.figma.com/oauth?client_id={PUBLIC_FIGMA_CLIENT_ID}&redirect_uri={PUBLIC_FIGMA_REDIRECT_URI}&scope=files:read&state={Date.now()}&response_type=code"
@@ -78,19 +80,18 @@
 					File Last Modified: {file.lastModified}
 				</span>
 			</div>
-			<button
-				type="button"
-				class="rounded-lg p-2 bg-blue-600 hover:bg-blue-700 text-white"
-				on:click={handleGenerate}
-			>
-				Generate with TailwindCSS
-			</button>
+			{#if !generated}
+				<Button on:click={handleGenerate}>Generate with TailwindCSS</Button>
+			{:else}
+				<Button on:click={() => (preview = !preview)}>Preview</Button>
+			{/if}
+			{#if preview}
+				{@html generated}
+			{/if}
 			{#if generated}
 				<div class="flex flex-col gap-2">
 					<span> Generated: </span>
-					<code class="bg-neutral-900 p-2 rounded-lg">
-						{generated}
-					</code>
+					<Code code={generated}/>
 				</div>
 			{/if}
 		</div>
@@ -102,25 +103,13 @@
 				placeholder="File ID"
 				bind:value={fileID}
 			/>
-			<button
-				disabled={loading}
-				type="button"
-				class={`
-        rounded-lg
-        p-2
-        bg-blue-600
-        hover:bg-blue-700
-        text-white
-        ${loading ? 'cursor-not-allowed opacity-50' : ''}
-      `}
-				on:click={handleSearchFile}
-			>
+			<Button disabled={loading} {loading} on:click={handleSearchFile}>
 				{#if loading}
 					Loading...
 				{:else}
 					Search
 				{/if}
-			</button>
+			</Button>
 		</div>
 	{/if}
 </div>
