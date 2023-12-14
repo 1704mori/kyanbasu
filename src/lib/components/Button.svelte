@@ -6,7 +6,7 @@
 
 	export let type: 'button' | 'submit' | 'reset' = 'button';
   // phantasm is a ghost button that is not visible until hovered
-  export let ghost: "phantasm" | "ghost" = "ghost";
+  export let ghost: "phantasm" | "ghost" | "solid" = "solid";
 
 	export let size: 'sm' | 'md' | 'lg' = 'md';
 	export let color: Colors = 'blue';
