@@ -1,1 +1,6 @@
-// place files you want to import through the `$lib` alias in this folder.
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+ 
+export function cn(...args: ClassValue[]) {
+  return twMerge(clsx(args));
+}
