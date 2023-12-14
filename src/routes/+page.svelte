@@ -60,7 +60,7 @@
 <div class="grid place-items-center h-full">
 	{#if !$auth?.accessToken}
 		<LoginWithFigma
-			href="https://www.figma.com/oauth?client_id=${PUBLIC_FIGMA_CLIENT_ID}&redirect_uri=${PUBLIC_FIGMA_REDIRECT_URI}&scope=files:read&state=${Date.now()}&response_type=code"
+			href="https://www.figma.com/oauth?client_id={PUBLIC_FIGMA_CLIENT_ID}&redirect_uri={PUBLIC_FIGMA_REDIRECT_URI}&scope=files:read&state={Date.now()}&response_type=code"
 		/>
 	{:else if file}
 		<div class="flex flex-col gap-2">
