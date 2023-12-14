@@ -58,6 +58,8 @@ export type DocumentChild = {
   strokeWeight: number;
   strokeAlign: string;
   backgroundColor: Color;
+  cornerRadius: number;
+  cornerSmoothing: number;
   layoutMode: string;
   itemSpacing: number;
   counterAxisAlignItems: string;
