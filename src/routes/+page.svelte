@@ -72,19 +72,22 @@
 		/>
 	{:else if file}
 		<div class="flex flex-col gap-2 w-full">
-			<div class="flex flex-col gap-1">
-				<span>
-					File ID: {fileID}
-				</span>
-				<span>
-					File Name: {file.name}
-				</span>
-				<span>
-					File Version: {file.version}
-				</span>
-				<span>
-					File Last Modified: {file.lastModified}
-				</span>
+			<div class="flex flex-col gap-2">
+				<div class="flex flex-row gap-2 font-medium">
+					<span class="bg-neutral-900 px-3 py-2 rounded-lg">
+						File ID: {fileID}
+					</span>
+					<span class="bg-neutral-900 px-3 py-2 rounded-lg">
+						File Name: {file.name}
+					</span>
+					<span class="bg-neutral-900 px-3 py-2 rounded-lg">
+						File Version: {file.version}
+					</span>
+					<span class="bg-neutral-900 px-3 py-2 rounded-lg">
+						File Last Modified: {file.lastModified}
+					</span>
+				</div>
+				<img class="w-full max-h-96 rounded-md object-none" src={file.thumbnailUrl} alt="File Thumbnail" />
 			</div>
 			{#if !generated}
 				<Button on:click={handleGenerate}>Generate with TailwindCSS</Button>
