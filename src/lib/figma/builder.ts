@@ -1,41 +1,36 @@
 import type { DocumentChild } from "./types";
 import { RGBAToHex, normalizeRGBA } from "./utils";
 
-export function generateComponent(document: DocumentChild) {
-
+export function generateComponent(document: DocumentChild, level = 0) {
   const { backgroundColor } = document;
-
   let hex = '#ffffff';
   if (backgroundColor && backgroundColor.r) {
     hex = RGBAToHex(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
   }
 
+  const indent = '\t'.repeat(level);
+  const childIndent = '\t'.repeat(level + 1);
+
   const buildChildren = () => {
     let children = '';
 
-    if (!document.children || !document.children.length) return;
+    if (!document.children || !document.children.length) return '';
 
     document.children.forEach(child => {
-      if (!child) return;
-
-      if (!child.name) return;
+      if (!child || !child.name) return;
 
       const matches = child.name.match(INPUT_NAME_REGEX);
-
       if (matches) {
-        children += generateInputComponent(child);
-        console.log(children);
-        return;
+        children += `${childIndent}${generateInputComponent(child)}\n`;
+      } else {
+        children += `${childIndent}${generateComponent(child, level + 1)}\n`;
       }
-
-
-      children += generateComponent(child);
     });
 
     return children;
   }
 
-  return `<div class="${buildClasses(document)}">${buildChildren()}</div>`;
+  return `${indent}<div class="${buildClasses(document)}">\n${buildChildren()}${indent}</div>`;
 }
 
 const INPUT_NAME_REGEX = /input:(\w+)/;
