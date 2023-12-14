@@ -1,4 +1,6 @@
 import type { FigmaFile, FigmaUser, RequestTokenResponse } from "./types";
+import { auth } from "$lib/stores/auth";
+import { get } from "svelte/store";
 
 const FIGMA_API_URL = 'https://api.figma.com';
 
@@ -51,19 +53,27 @@ class FigmaAPI {
     }
   }
 
-  static async getFile(accessToken: string, fileId: string): Promise<FigmaFile> {
+  static async getFile(fileId: string): Promise<[FigmaFile, Error | null]> {
     const url = new URL(`${FIGMA_API_URL}/v1/files/${fileId}`);
+    const token = get(auth)?.accessToken;
 
     try {
       const data = await fetch(url, {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}` },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
       });
+
       const response = await data.json();
-      return response;
-    } catch (error) {
-      console.error('Failed to get file:', error);
-      throw error;
+
+      if (response.status !== 200) throw new Error(response.err);
+
+      return [response, null];
+    } catch (error: any) {
+      console.error('Failed to get file:', error.response);
+      return [null as any, new Error('Failed to get file')];
     }
   }
 }
