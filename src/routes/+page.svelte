@@ -2,7 +2,7 @@
 	import FigmaAPI from '$lib/figma';
 	import type { FigmaFile } from '$lib/figma/types';
 
-	import { generateComponent } from '$lib/figma/builder';
+	import { generateComponent, generateComponentFormatted } from '$lib/figma/builder';
 	import type { DocumentChild } from '$lib/figma/types';
 	import { onMount } from 'svelte';
 	import LoginWithFigma from '$lib/components/LoginWithFigma.svelte';
@@ -14,7 +14,7 @@
 	import Code from '$lib/components/Code.svelte';
 
 	let fileID = '';
-	let file: FigmaFile;
+	let file: FigmaFile | undefined;
 	let generated: string;
 
 	let loading = false;
@@ -44,8 +44,8 @@
 	}
 
 	async function handleGenerate() {
-		const child = file.document.children[0].children[0] as unknown as DocumentChild;
-		generated = generateComponent(child);
+		const child = file!.document.children[0].children[0] as unknown as DocumentChild;
+		generated = await generateComponentFormatted(child);
 	}
 
 	onMount(async () => {
@@ -94,9 +94,10 @@
 					<Code code={generated}/>
 				</div>
 			{/if}
+			<Button ghost="ghost" on:click={() => (file = undefined)}>Search Again</Button>
 		</div>
 	{:else}
-		<div class="flex flex-col gap-1">
+		<div class="flex flex-col gap-1 w-full">
 			<input
 				class="bg-neutral-900 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
 				type="text"
