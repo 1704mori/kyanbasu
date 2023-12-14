@@ -1,11 +1,12 @@
 
+import { FIGMA_CLIENT_ID, FIGMA_CLIENT_SECRET, FIGMA_REDIRECT_URI } from "$env/static/private";
 import FigmaAPI from "$lib/figma";
 import type { RequestEvent } from "./$types";
 
 const figma = new FigmaAPI(
-  import.meta.env.VITE_FIGMA_CLIENT_ID,
-  import.meta.env.VITE_FIGMA_CLIENT_SECRET,
-  import.meta.env.VITE_FIGMA_REDIRECT_URI
+  FIGMA_CLIENT_ID,
+  FIGMA_CLIENT_SECRET,
+  FIGMA_REDIRECT_URI
 );
 
 export async function GET(req: RequestEvent) {
@@ -15,7 +16,7 @@ export async function GET(req: RequestEvent) {
   if (!code) {
     return new Response(JSON.stringify({ "result": "error" }), {
       headers: {
-        'content-type': 'application/json',
+        'Content-Type': 'application/json',
       },
       status: 400,
     });
@@ -24,19 +25,20 @@ export async function GET(req: RequestEvent) {
   if (!state) {
     return new Response(JSON.stringify({ "result": "error" }), {
       headers: {
-        'content-type': 'application/json',
+        'Content-Type': 'application/json',
       },
       status: 400,
     });
   }
 
   const { access_token, expires_in } = await figma.requestToken(code);
-  console.log(access_token, expires_in);
 
-  return new Response(JSON.stringify({ "result": "ok" }), {
+  return new Response(undefined, {
     headers: {
-      'content-type': 'application/json',
+      'Content-Type': 'application/json',
       'set-cookie': `figma_access_token=${access_token}; expires=${new Date(Date.now() + expires_in * 1000).toUTCString()}; path=/;`,
+      'Location': '/',
     },
+    status: 302,
   });
 };

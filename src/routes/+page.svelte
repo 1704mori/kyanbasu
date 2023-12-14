@@ -2,12 +2,12 @@
 	import FigmaAPI from '$lib/figma';
 	import type { FigmaFile } from '$lib/figma/types';
 
-	// import file from "$lib/figma/file.json";
 	import { generateComponent } from '$lib/figma/builder';
 	import type { DocumentChild } from '$lib/figma/types';
+	import { onMount } from 'svelte';
+	import LoginWithFigma from '$lib/components/LoginWithFigma.svelte';
 
-	// const child = file.document.children[0].children[0] as unknown as DocumentChild;
-	// const component = generateComponent(child)
+	import { auth, isLoggedIn, logout } from '$lib/stores/auth';
 
 	let fileID = '';
 	let file: FigmaFile;
@@ -16,16 +16,18 @@
 	let loading = false;
 
 	async function handleSearchFile() {
-		const cookies = document.cookie;
-		const accessToken = cookies.split('figma_access_token=')[1].split(';')[0];
+		if (!fileID) {
+			alert('Please enter a file ID');
+			return;
+		}
 
-		if (!accessToken) {
-			alert('Please login first');
+		if (!$auth?.accessToken) {
+			alert('Please login with Figma');
 			return;
 		}
 
 		loading = true;
-		file = await FigmaAPI.getFile(accessToken, fileID);
+		file = await FigmaAPI.getFile($auth?.accessToken, fileID);
 		loading = false;
 	}
 
@@ -35,10 +37,22 @@
 
 		generated = component;
 	}
+
+	onMount(async () => {
+		const accessToken = document.cookie.split('figma_access_token=')[1].split(';')[0];
+		if (!accessToken) return;
+
+		const me = await FigmaAPI.getMe(accessToken);
+		auth.set({ ...me, accessToken });
+	});
 </script>
 
 <div class="grid place-items-center h-full">
-	{#if file}
+	{#if !isLoggedIn}
+		<LoginWithFigma
+			href="https://www.figma.com/oauth?client_id=nk6f9Qy4ghHLRnyhe5IQ0v&redirect_uri=http://localhost:5173/api/figma/callback&scope=files:read&state=123&response_type=code"
+		/>
+	{:else if file}
 		<div class="flex flex-col gap-2">
 			<div class="flex flex-col gap-1">
 				<span>
@@ -57,20 +71,18 @@
 			<button
 				type="button"
 				class="rounded-lg p-2 bg-blue-600 hover:bg-blue-700 text-white"
-        on:click={handleGenerate}
+				on:click={handleGenerate}
 			>
 				Generate with TailwindCSS
 			</button>
-      {#if generated}
-        <div class="flex flex-col gap-2">
-          <span>
-            Generated:
-          </span>
-          <code class="bg-neutral-900 p-2 rounded-lg">
-            {generated}
-          </code>
-        </div>
-      {/if}
+			{#if generated}
+				<div class="flex flex-col gap-2">
+					<span> Generated: </span>
+					<code class="bg-neutral-900 p-2 rounded-lg">
+						{generated}
+					</code>
+				</div>
+			{/if}
 		</div>
 	{:else}
 		<div class="flex flex-col gap-1">

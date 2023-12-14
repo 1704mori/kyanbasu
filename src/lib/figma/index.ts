@@ -3,13 +3,11 @@ import type { FigmaFile, FigmaUser, RequestTokenResponse } from "./types";
 const FIGMA_API_URL = 'https://api.figma.com';
 
 class FigmaAPI {
-  private baseURL: string;
   private clientId: string;
   private clientSecret: string;
   private redirectUri: string;
 
   constructor(clientId: string, clientSecret: string, redirectUri: string) {
-    this.baseURL = import.meta.env.FIGMA_API_URL || FIGMA_API_URL;
     this.clientId = clientId
     this.clientSecret = clientSecret;
     this.redirectUri = redirectUri;
@@ -37,13 +35,13 @@ class FigmaAPI {
     }
   }
 
-  async getMe(accessToken: string): Promise<FigmaUser> {
-    const url = new URL(`${this.baseURL}/v1/me`);
+  static async getMe(accessToken: string): Promise<FigmaUser> {
+    const url = new URL(`${FIGMA_API_URL}/v1/me`);
 
     try {
       const data = await fetch(url, {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json', 'X-Figma-Token': accessToken },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}` },
       });
       const response = await data.json();
       return response;
