@@ -7,7 +7,7 @@
 	import { onMount } from 'svelte';
 	import LoginWithFigma from '$lib/components/LoginWithFigma.svelte';
 
-	import { auth, isLoggedIn, logout } from '$lib/stores/auth';
+	import { auth, logout } from '$lib/stores/auth';
 
 	let fileID = '';
 	let file: FigmaFile;
@@ -46,8 +46,10 @@
 	}
 
 	onMount(async () => {
-		const accessToken = document.cookie.split('figma_access_token=')[1].split(';')[0];
+		let accessToken = document.cookie.split('figma_access_token=')[1];
 		if (!accessToken) return;
+		accessToken = accessToken.split(';')[0];
+		console.log(accessToken);
 
 		const me = await FigmaAPI.getMe(accessToken);
 		auth.set({ ...me, accessToken });
@@ -55,7 +57,7 @@
 </script>
 
 <div class="grid place-items-center h-full">
-	{#if !isLoggedIn}
+	{#if !$auth?.accessToken}
 		<LoginWithFigma
 			href="https://www.figma.com/oauth?client_id=nk6f9Qy4ghHLRnyhe5IQ0v&redirect_uri=http://localhost:5173/api/figma/callback&scope=files:read&state=123&response_type=code"
 		/>

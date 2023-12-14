@@ -32,6 +32,7 @@ export async function GET(req: RequestEvent) {
   }
 
   const { access_token, expires_in } = await figma.requestToken(code);
+  console.log({ access_token, expires_in });
 
   return new Response(undefined, {
     headers: {
