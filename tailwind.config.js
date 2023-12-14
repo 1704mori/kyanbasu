@@ -2,10 +2,12 @@
 export default {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 	theme: {
-		extend: {}
+		extend: {
+			colors: {
+				primary: "hsl(209 100% 55%)",
+				"primary-accent": "hsl(209 100% 50%)",
+			}
+		}
 	},
-	safelist: [
-    /.*/
-  ],
-	plugins: []
+	plugins: [],
 };

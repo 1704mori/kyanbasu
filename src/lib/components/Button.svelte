@@ -5,11 +5,11 @@
 	type Colors = keyof typeof TailwindColors;
 
 	export let type: 'button' | 'submit' | 'reset' = 'button';
-  // phantasm is a ghost button that is not visible until hovered
-  export let ghost: "phantasm" | "ghost" | "solid" = "solid";
+	// phantasm is a ghost button that is not visible until hovered
+	export let ghost: 'phantasm' | 'ghost' | "none" = 'none';
 
 	export let size: 'sm' | 'md' | 'lg' = 'md';
-	export let color: Colors = 'blue';
+	export let color: 'primary' = 'primary';
 	export let loading = false;
 	export let disabled = false;
 
@@ -22,29 +22,27 @@
 
 <button
 	{type}
-  {...$$props}
-  class={cn(
-    sizes[size],
-    `${ghost}`,
-    // "bg-blue-600 hover:bg-blue-700 hover:bg-blue-600/20 bg-blue-600/50 border-blue-600",
-    `bg-${color}-600 hover:bg-${color}-700 text-white`,
-    ghost === "phantasm" && `bg-transparent border border-${color}-600 hover:bg-${color}-600/20 text-white`,
-    ghost === "ghost" && `bg-${color}-600/20 hover:bg-${color}-600/30 border border-${color}-600`,
-    loading && `bg-${color}-600/50 cursor-not-allowed`,
-    "rounded-lg",
-    "font-medium",
-    "transition-colors",
-    "focus:outline-none",
-    "focus:ring-2",
-    "focus:ring-${color}-500",
-    "focus:ring-opacity-50",
-    `disabled:bg-${color}-600/50`,
-    "disabled:cursor-not-allowed",
-    "disabled:pointer-events-none",
-  )}
+	{...$$props}
+	class={cn(
+		sizes[size],
+		`bg-${color} hover:bg-${color}-accent text-white`,
+		ghost === 'phantasm' && `bg-transparent border border-${color} hover:bg-${color}/20 text-white`,
+		ghost === 'ghost' && `bg-${color}/20 hover:bg-${color}/30 border border-${color}`,
+		loading && `bg-${color}/50 cursor-not-allowed`,
+		'rounded-lg',
+		'font-medium',
+		'transition-colors',
+		'focus:outline-none',
+		'focus:ring-2',
+		'focus:ring-${color}-500',
+		'focus:ring-opacity-50',
+		`disabled:bg-${color}/50`,
+		'disabled:cursor-not-allowed',
+		'disabled:pointer-events-none'
+	)}
 	disabled={loading || disabled}
-  on:click
-  on:submit
+	on:click
+	on:submit
 >
 	<slot />
 </button>
