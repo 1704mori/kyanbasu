@@ -1,5 +1,7 @@
 import type { FigmaFile, FigmaUser, RequestTokenResponse } from "./types";
 
+const FIGMA_API_URL = 'https://api.figma.com';
+
 class FigmaAPI {
   private baseURL: string;
   private clientId: string;
@@ -7,14 +9,14 @@ class FigmaAPI {
   private redirectUri: string;
 
   constructor(clientId: string, clientSecret: string, redirectUri: string) {
-    this.baseURL = import.meta.env.FIGMA_API_URL;
+    this.baseURL = import.meta.env.FIGMA_API_URL || FIGMA_API_URL;
     this.clientId = clientId
     this.clientSecret = clientSecret;
     this.redirectUri = redirectUri;
   }
 
   async requestToken(code: string): Promise<RequestTokenResponse> {
-    const url = new URL(`${this.baseURL}/oauth/token`);
+    const url = new URL(`https://www.figma.com/api/oauth/token?/oauth/token`);
 
     url.searchParams.append('client_id', this.clientId);
     url.searchParams.append('client_secret', this.clientSecret);
@@ -51,13 +53,13 @@ class FigmaAPI {
     }
   }
 
-  async getFile(accessToken: string, fileId: string): Promise<FigmaFile> {
-    const url = new URL(`${this.baseURL}/v1/files/${fileId}`);
+  static async getFile(accessToken: string, fileId: string): Promise<FigmaFile> {
+    const url = new URL(`${FIGMA_API_URL}/v1/files/${fileId}`);
 
     try {
       const data = await fetch(url, {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json', 'X-Figma-Token': accessToken },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}` },
       });
       const response = await data.json();
       return response;
